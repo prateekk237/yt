@@ -20,7 +20,7 @@ def search_videos(query):
         return []
 
     results = []
-    for video in videos[:10]:  # Limit to 10 videos to prevent overload
+    for video in videos:  # Limit to 10 videos to prevent overload
         title_tag = video.find("a")
         if not title_tag:
             continue
