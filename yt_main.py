@@ -61,7 +61,7 @@ music_background = """
 """
 
 # Apply CSS
-st.markdown(music_background, unsafe_allow_html=True)
+#st.markdown(music_background, unsafe_allow_html=True)
 
 # Streamlit UI
 st.title("🎵 Free YT Music Player")
