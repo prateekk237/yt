@@ -74,7 +74,7 @@ if query:
     videos = search_videos(query)
 
     if videos:
-        for video in videos:  # Display all videos
+        for video in videos[:15]:  # Display all videos
             st.subheader(video["title"])
             st.markdown(
                 f'<iframe src="{video["embed_url"]}" width="700" height="400" frameborder="0" allowfullscreen></iframe>',
