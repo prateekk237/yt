@@ -72,8 +72,9 @@ st.write("Designed By: Prateek Malhotra ❤️")
 # Search bar
 query = st.text_input("Search for a song or artist")
 
-if query:
-    videos = search_videos(query)
+if st.button("Search"):
+    if query:
+        st.session_state.search_results = search_videos(query) 
 
     if videos:
         for video in videos:  # Display all videos
