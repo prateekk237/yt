@@ -6,11 +6,9 @@ from bs4 import BeautifulSoup
 # Function to fetch all videos
 def search_videos(query):
     search_url = f"https://inv.nadeko.net/search?q={query.replace(' ', '+')}"
-    #headers = {"User-Agent": "Mozilla/5.0"}
+    headers = {"User-Agent": "Mozilla/5.0"}
 
-    response = requests.get(search_url
-                            #, headers=headers
-                           )
+    response = requests.get(search_url, headers=headers)
 
     if response.status_code != 200:
         st.error("Failed to fetch data. Try again later.")
@@ -63,7 +61,7 @@ music_background = """
 """
 
 # Apply CSS
-#st.markdown(music_background, unsafe_allow_html=True)
+st.markdown(music_background, unsafe_allow_html=True)
 
 # Streamlit UI
 st.title("🎵 Free YT Music Player")
@@ -72,9 +70,8 @@ st.write("Designed By: Prateek Malhotra ❤️")
 # Search bar
 query = st.text_input("Search for a song or artist")
 
-if st.button("Search"):
-    if query:
-        st.session_state.search_results = search_videos(query) 
+if query:
+    videos = search_videos(query)
 
     if videos:
         for video in videos:  # Display all videos
