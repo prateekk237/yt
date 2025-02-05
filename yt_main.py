@@ -6,9 +6,11 @@ from bs4 import BeautifulSoup
 # Function to fetch all videos
 def search_videos(query):
     search_url = f"https://inv.nadeko.net/search?q={query.replace(' ', '+')}"
-    headers = {"User-Agent": "Mozilla/5.0"}
+    #headers = {"User-Agent": "Mozilla/5.0"}
 
-    response = requests.get(search_url, headers=headers)
+    response = requests.get(search_url
+                            #, headers=headers
+                           )
 
     if response.status_code != 200:
         st.error("Failed to fetch data. Try again later.")
