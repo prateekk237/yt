@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 
-
+@st.cache_data
 # Function to fetch all videos
 def search_videos(query):
     search_url = f"https://inv.nadeko.net/search?q={query.replace(' ', '+')}"
