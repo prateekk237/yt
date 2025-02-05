@@ -1,2 +1,3 @@
-pip install mkdocs-material
-mkdocs-material serve
+streamlit
+requests
+beautifulsoup4
