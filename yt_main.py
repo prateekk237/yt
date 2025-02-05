@@ -93,7 +93,9 @@ for index, video in enumerate(st.session_state.videos):
     # Show embedded video if selected, else show thumbnail
     if st.session_state.selected_video == video["video_id"]:
         st.markdown(
-            f'<iframe src="{video["embed_url"]}" width="700" height="400" frameborder="0" allowfullscreen></iframe>',
+            f'<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: black;">'
+            f'<iframe src="{video["embed_url"]}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allowfullscreen></iframe>'
+            f'</div>',
             unsafe_allow_html=True,
         )
     else:
