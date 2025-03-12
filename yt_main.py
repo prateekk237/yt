@@ -109,6 +109,9 @@ def save_recent_searches(searches):
     with open(RECENT_SEARCHES_FILE, "w") as f:
         json.dump(searches, f)
 
+# Display recent searches section
+if recent_searches:
+    st.subheader("🔍 Recent Searches")
 # Initialize recent searches
 recent_searches = load_recent_searches()
 
@@ -149,10 +152,6 @@ recent_tag_style = """
     </style>
 """
 st.markdown(recent_tag_style, unsafe_allow_html=True)
-
-# Display recent searches section
-if recent_searches:
-    st.subheader("🔍 Recent Searches")
 
 
 # Handle search
