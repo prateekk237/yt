@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 
-
 @st.cache_data
 def search_videos(query):
     search_url = f"https://inv.nadeko.net/search?q={query.replace(' ', '+')}"
@@ -41,7 +40,6 @@ def search_videos(query):
 
     return results
 
-
 # UI Styling
 music_background = """
 <style>
@@ -65,6 +63,16 @@ music_background = """
         padding: 10px 20px;
         border-radius: 10px;
     }
+    /* Updated Recent Search Styles */
+    .recent-tag button {
+        background: #00aaff !important;  /* Sky blue */
+        color: black !important;         /* Black text */
+        padding: 4px 8px;                /* Smaller size */
+        font-size: 14px;                 /* Smaller font */
+        border-radius: 12px;             /* Rounded corners */
+        margin: 4px;                     /* Space between tags */
+        cursor: pointer;                 /* Clickable cursor */
+    }
 </style>
 """
 st.markdown(music_background, unsafe_allow_html=True)
@@ -73,18 +81,65 @@ st.markdown(music_background, unsafe_allow_html=True)
 st.title("🎵 Free YT Music Player")
 st.write("Designed By: Prateek Malhotra ❤️")
 
-query = st.text_input("Search for a song or artist")
-
-# Store video data in session state
+# Initialize session states
 if "videos" not in st.session_state:
     st.session_state.videos = []
 if "selected_video" not in st.session_state:
     st.session_state.selected_video = None
+if "recent_searches" not in st.session_state:
+    st.session_state.recent_searches = []  # Store recent searches
 
+# Search input
+query = st.text_input("Search for a song or artist")
+
+# Ensure session state stores recent searches
+if "recent_searches" not in st.session_state:
+    st.session_state.recent_searches = []
+
+# Add current query to recent searches (if not already present)
+if query and query not in st.session_state.recent_searches:
+    st.session_state.recent_searches.insert(0, query)
+    st.session_state.recent_searches = st.session_state.recent_searches[:10]  # Keep only last 10
+
+# Custom styling for recent search tags
+recent_tag_style = """
+    <style>
+    .recent-tag {
+        display: inline-block;
+        margin: 5px;
+        padding: 5px 10px;
+        background: #00aaff; /* Sky blue background */
+        color: black;         /* Black text */
+        font-size: 14px;      /* Smaller font */
+        border-radius: 12px;  /* Rounded corners */
+        cursor: pointer;      /* Make it clickable */
+    }
+    </style>
+"""
+st.markdown(recent_tag_style, unsafe_allow_html=True)
+
+# Show recent searches as clickable tags
+if st.session_state.recent_searches:
+    st.subheader("🔍 Recent Searches")
+    for recent in st.session_state.recent_searches:
+        if st.button(recent, key=f"recent_{recent}"):
+            query = recent
+            st.session_state.videos = search_videos(query)
+            st.session_state.selected_video = None
+            st.rerun()
+
+
+# Handle search
 if st.button("Search"):
     if query:
         st.session_state.videos = search_videos(query)
         st.session_state.selected_video = None  # Reset selected video on new search
+
+        # Store in recent searches (limit to 5)
+        if query not in st.session_state.recent_searches:
+            st.session_state.recent_searches.insert(0, query)
+            if len(st.session_state.recent_searches) > 5:  # Keep last 5 searches
+                st.session_state.recent_searches.pop()
 
 # Display videos
 for index, video in enumerate(st.session_state.videos):
