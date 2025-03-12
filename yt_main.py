@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
+import json
+import os
 
 @st.cache_data
 def search_videos(query):
@@ -92,14 +94,44 @@ if "recent_searches" not in st.session_state:
 # Search input
 query = st.text_input("Search for a song or artist")
 
-# Ensure session state stores recent searches
-if "recent_searches" not in st.session_state:
-    st.session_state.recent_searches = []
+# File to store recent searches
+RECENT_SEARCHES_FILE = "recent_searches.json"
 
-# Add current query to recent searches (if not already present)
-if query and query not in st.session_state.recent_searches:
-    st.session_state.recent_searches.insert(0, query)
-    st.session_state.recent_searches = st.session_state.recent_searches[:10]  # Keep only last 10
+# Load recent searches from file
+def load_recent_searches():
+    if os.path.exists(RECENT_SEARCHES_FILE):
+        with open(RECENT_SEARCHES_FILE, "r") as f:
+            return json.load(f)
+    return []
+
+# Save recent searches to file
+def save_recent_searches(searches):
+    with open(RECENT_SEARCHES_FILE, "w") as f:
+        json.dump(searches, f)
+
+# Initialize recent searches
+recent_searches = load_recent_searches()
+
+# Add query to recent searches if not already present (limit to 10)
+if query and query not in recent_searches:
+    recent_searches.insert(0, query)
+    recent_searches = recent_searches[:10]
+    save_recent_searches(recent_searches)
+
+# Handle removal of a recent search
+for recent in recent_searches:
+    col1, col2 = st.columns([6, 1])
+    with col1:
+        if st.button(recent, key=f"recent_{recent}"):
+            query = recent
+            st.session_state.videos = search_videos(query)
+            st.session_state.selected_video = None
+            st.rerun()
+    with col2:
+        if st.button("❌", key=f"remove_{recent}"):
+            recent_searches.remove(recent)
+            save_recent_searches(recent_searches)
+            st.rerun()
 
 # Custom styling for recent search tags
 recent_tag_style = """
@@ -118,15 +150,9 @@ recent_tag_style = """
 """
 st.markdown(recent_tag_style, unsafe_allow_html=True)
 
-# Show recent searches as clickable tags
-if st.session_state.recent_searches:
+# Display recent searches section
+if recent_searches:
     st.subheader("🔍 Recent Searches")
-    for recent in st.session_state.recent_searches:
-        if st.button(recent, key=f"recent_{recent}"):
-            query = recent
-            st.session_state.videos = search_videos(query)
-            st.session_state.selected_video = None
-            st.rerun()
 
 
 # Handle search
